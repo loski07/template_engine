@@ -1,0 +1,4 @@
+"variable1": "hello"
+"array1": ["a", "b", "c"]
+"variable2": "hello"
+"variable2": "bye"
