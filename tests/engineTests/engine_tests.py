@@ -87,7 +87,7 @@ class VariableManagerTests(unittest.TestCase):
         self._test_parse_correct_file('correct_file_duplicates.txt')
 
     def test_parse_correct_file_scrambled(self):
-        self._test_parse_correct_file('correct_file_scrambled')
+        self._test_parse_correct_file('correct_file_scrambled.txt')
 
 
 def path_composer(filename):

@@ -75,10 +75,12 @@ class VariableManager:
         self._variables = {}
         with open(self._filepath, 'r') as f:
             for line in f:
-                token, value = VariableManager._parse_line(line)
-                if token in self._variables:
-                    self.logger.warning("The variable '{}' has already been defined".format(token))
-                self._variables[token] = value
+                line = line.strip(' \r\n')
+                if len(line) > 0:
+                    token, value = VariableManager._parse_line(line)
+                    if token in self._variables:
+                        self.logger.warning("The variable '{}' has already been defined".format(token))
+                    self._variables[token] = value
             if len(self._variables.keys()) == 0:
                 self.logger.warning("No variables found in the replacements file")
 
