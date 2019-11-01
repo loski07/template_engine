@@ -81,13 +81,13 @@ class VariableManagerTests(unittest.TestCase):
             self.fail(e)
 
     def test_parse_correct_file(self):
-        self._test_parse_correct_file('correct_file.txt')
+        self._test_parse_correct_file('correct_var_file.txt')
 
     def test_parse_correct_file_duplicates(self):
-        self._test_parse_correct_file('correct_file_duplicates.txt')
+        self._test_parse_correct_file('correct_var_file_duplicates.txt')
 
     def test_parse_correct_file_scrambled(self):
-        self._test_parse_correct_file('correct_file_scrambled.txt')
+        self._test_parse_correct_file('correct_var_file_scrambled.txt')
 
 
 def path_composer(filename):
