@@ -91,16 +91,28 @@ class VariableManagerTests(unittest.TestCase):
 
 
 def path_composer(filename):
+    """
+    Utility function that composes the path of a file in the test resources folder of the project.
+    :param filename: String with the name of the file.
+    :return: Full path to the file.
+    """
     return os.path.join(os.path.dirname(os.path.dirname(os.path.realpath(__file__))), 'resources', filename)
 
 
 def dict_equals(d1, d2):
+    """
+    Utility function that checks if two dictionaries are equals.
+    :param d1: First dictionary to compare.
+    :param d2: Second dictionary to compare.
+    :return: Boolean that indicates if they are equals or not.
+    """
     if len(d1.keys()) != len(d2.keys()) or len(d1.values()) != len(d2.values()):
         return False
     for key in d1.keys():
         if key not in d2.keys():
             return False
-        if (isinstance(d1[key], str) and not isinstance(d2[key], str)) or (isinstance(d1[key], list) and not isinstance(d2[key], list)):
+        if (isinstance(d1[key], str) and not isinstance(d2[key], str)) or (
+                isinstance(d1[key], list) and not isinstance(d2[key], list)):
             return False
         if isinstance(d1[key], str) and d1[key] != d2[key]:
             return False
