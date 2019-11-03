@@ -2,14 +2,14 @@
 ## Template format example
 ```
 some random text
-{{variable1}}
+I wanted to say {{variable1}} to you
 some other text
 
 {{#loop array1 item}}
 do something with the {{item}}
 {{/loop}}
 
-{{variable2}}
+now I say {{variable2}} to everyone
 more text
 ```
 
@@ -23,13 +23,13 @@ more text
 ## Expected result
 ```
 some random text
-hello
+I wanted to say hello to you
 some other text
 
 do something with the a
 do something with the b
 do something with the c
 
-bye
+now I say bye to everyone
 more text
 ```

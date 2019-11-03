@@ -1,0 +1,13 @@
+some random text
+I wanted to say {{variable1}} to you
+some other text
+
+{{ #loop array1 item }}
+do something with the {{ item }}
+{{ /loop }}
+
+now I say {{   variable2   }} to everyone
+more text
+
+I might say {{ variable1 }} to some and {{ variable2 }} to others
+is that okay?

@@ -1,0 +1,2 @@
+hi {{ variable1 }}
+bye
