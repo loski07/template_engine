@@ -1,6 +1,7 @@
 import unittest
 import os
 import engine.file_managers
+from engine.file_managers import Tokens, VerbatimElement, LoopElement, ReplacementElement, BlankElement, EolElement
 
 
 class VariableManagerTests(unittest.TestCase):
@@ -119,6 +120,63 @@ def dict_equals(d1, d2):
         if isinstance(d1[key], list) and set(d1[key]) != set(d2[key]):
             return False
     return True
+
+
+class ScannerTest(unittest.TestCase):
+
+    def _test_output(self, filename, expected_results):
+        scanner = engine.file_managers.Scanner(path_composer(filename))
+        file_analyzed = [token for token in scanner.scan()]
+        for idx, val in enumerate(expected_results):
+            self.assertEqual(val, file_analyzed[idx], "The output does not match the expectations.")
+
+    def test_scan_file(self):
+        """
+        Tests a file with all the tokens existing in the template.
+        """
+        line1 = [(Tokens.VERBATIM, "verbatim"), (Tokens.BLANK, " "),
+                 (Tokens.INIT_EXPRESSION, None), (Tokens.END_EXPRESSION, None), (Tokens.BLANK, " "),
+                 (Tokens.INIT_EXPRESSION, None), (Tokens.BLANK, " "), (Tokens.END_EXPRESSION, None),
+                 (Tokens.BLANK, " "),
+                 (Tokens.INIT_LOOP, None), (Tokens.BLANK, " "), (Tokens.END_LOOP, None),
+                 (Tokens.EOL, "\n")]
+        self._test_output("scanner_elements.txt", line1)
+
+
+class ParserTest(unittest.TestCase):
+
+    def _test_parse(self, filename, expected_results):
+        parser = engine.file_managers.Parser(engine.file_managers.Scanner(path_composer(filename)))
+        file_analyzed = [construction for construction in parser.parse()]
+
+        for idx, val in enumerate(expected_results):
+            self.assertTrue(isinstance(type(val), type(file_analyzed[idx]) or
+                                       issubclass(type(val), type(file_analyzed[idx]))))
+            if type(val) == ReplacementElement.__class__:
+                self.assertEqual(val.variable_name, file_analyzed[idx].variable_name, "Different vars")
+            if type(val) == VerbatimElement.__class__:
+                self.assertEqual(val.value, file_analyzed[idx].value, "Different vars")
+
+    def test_parse_simple_replacement(self):
+        expected_results = [VerbatimElement("hi"), BlankElement(), ReplacementElement("variable1"), EolElement(),
+                            VerbatimElement("bye"), EolElement()]
+        self._test_parse("parser_var.txt", expected_results)
+
+    def test_parse_loop(self):
+        expected_results = [LoopElement("array1", "item",
+                                        [VerbatimElement("repeat"), BlankElement(),
+                                         ReplacementElement("item"), BlankElement(),
+                                         VerbatimElement("again"), EolElement()
+                                         ]
+                                        )
+                            ]
+        self._test_parse("parse_loop.txt", expected_results)
+
+    # def test_parse_file(self):
+    #     parser = engine.file_managers.Parser(engine.file_managers.Scanner(path_composer("parser_loop.txt")))
+    #
+    #     for c in parser.parse():
+    #         print(c)
 
 
 if __name__ == '__main__':
