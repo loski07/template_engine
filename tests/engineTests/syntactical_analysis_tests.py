@@ -173,5 +173,6 @@ class ParserTest(unittest.TestCase):
         with self.assertRaises(engine.syntactical_analysis.SyntaxException):
             self._test_parse("parser_loop_wrong_more_params.txt", [])
 
+
 if __name__ == '__main__':
     unittest.main()
