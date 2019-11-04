@@ -1,9 +1,18 @@
+import os
 import unittest
 
 import engine.lexical_analysis
 import engine.syntactical_analysis
 from engine.syntactical_analysis import EolElement, BlankElement, VerbatimElement, ReplacementElement, LoopElement
-from tests.engineTests import path_composer
+
+
+def path_composer(filename):
+    """
+    Utility function that composes the path of a file in the test resources folder of the project.
+    :param filename: String with the name of the file.
+    :return: Full path to the file.
+    """
+    return os.path.join(os.path.dirname(os.path.dirname(os.path.realpath(__file__))), 'resources', filename)
 
 
 class ParserTest(unittest.TestCase):
@@ -13,18 +22,36 @@ class ParserTest(unittest.TestCase):
 
     @staticmethod
     def _replacements_equal(expected, obtained):
+        """
+        Compares if the engine.syntactical_analysis.ReplacementElement are the same.
+        :param expected: engine.syntactical_analysis.ReplacementElement expected.
+        :param obtained: engine.syntactical_analysis.ReplacementElement obtained.
+        :return: Boolean saying whether the objects are equals of not.
+        """
         same_type = isinstance(type(expected), type(obtained)) or issubclass(type(expected), type(obtained))
         same_value = expected.variable_name == obtained.variable_name
         return same_type and same_value
 
     @staticmethod
     def _verbatim_equal(expected, obtained):
+        """
+        Compares if the engine.syntactical_analysis.VerbatimElement are the same.
+        :param expected: engine.syntactical_analysis.VerbatimElement expected.
+        :param obtained: engine.syntactical_analysis.VerbatimElement obtained.
+        :return: Boolean saying whether the objects are equals of not.
+        """
         same_type = isinstance(type(expected), type(obtained)) or issubclass(type(expected), type(obtained))
         same_value = expected.value == obtained.value
         return same_type and same_value
 
     @staticmethod
     def _loop_equal(expected, obtained):
+        """
+        Compares if the engine.syntactical_analysis.LoopElement are the same.
+        :param expected: engine.syntactical_analysis.LoopElement expected.
+        :param obtained: engine.syntactical_analysis.LoopElement obtained.
+        :return: Boolean saying whether the objects are equals of not.
+        """
         same_type = isinstance(type(expected), type(obtained)) or issubclass(type(expected), type(obtained))
         same_value = expected.variable_name == obtained.variable_name
         same_value = same_value and expected.iterator_variable == obtained.iterator_variable
@@ -60,13 +87,19 @@ class ParserTest(unittest.TestCase):
                 self.assertTrue(ParserTest._loop_equal(expected, obtained))
 
     def test_parse_simple_replacement(self):
+        """
+        Tests the parsing of a file with simple string replacements.
+        """
         expected_results = [VerbatimElement("hi"), BlankElement(), ReplacementElement("variable1"), EolElement(),
                             VerbatimElement("bye"), EolElement()]
         self._test_parse("parser_var.txt", expected_results)
 
     def test_parse_loop(self):
+        """
+        Tests the parsing of a file with simple loops.
+        """
         expected_results = [LoopElement("array1", "item",
-                                        [EolElement(), VerbatimElement("repeat"), BlankElement(),
+                                        [VerbatimElement("repeat"), BlankElement(),
                                          ReplacementElement("item"), BlankElement(),
                                          VerbatimElement("again"), EolElement()
                                          ]
@@ -75,8 +108,11 @@ class ParserTest(unittest.TestCase):
         self._test_parse("parser_loop.txt", expected_results)
 
     def test_parse_loop_with_extra_var(self):
+        """
+        Tests the parsing of a file with simple string replacements together with a simple loop.
+        """
         expected_results = [LoopElement("array1", "item",
-                                        [EolElement(), VerbatimElement("repeat"), BlankElement(),
+                                        [VerbatimElement("repeat"), BlankElement(),
                                          ReplacementElement("item"), BlankElement(),
                                          VerbatimElement("again"), BlankElement(),
                                          ReplacementElement("var1"), EolElement()
@@ -86,13 +122,16 @@ class ParserTest(unittest.TestCase):
         self._test_parse("parser_loop_with_extra_var.txt", expected_results)
 
     def test_parse_loop_with_extra_loop(self):
+        """
+        Tests the parsing of a file with a loop embedded in another loop.
+        """
         expected_results = [LoopElement("array1", "item",
-                                        [EolElement(), VerbatimElement("repeat"), BlankElement(),
+                                        [VerbatimElement("repeat"), BlankElement(),
                                          ReplacementElement("item"), BlankElement(),
                                          VerbatimElement("again"), BlankElement(),
                                          ReplacementElement("var1"), EolElement(),
                                          LoopElement("array2", "item2", [
-                                             EolElement(), VerbatimElement("crossing"), BlankElement(),
+                                             VerbatimElement("crossing"), BlankElement(),
                                              VerbatimElement("fingers"), BlankElement(),
                                              ReplacementElement("item2"), EolElement()])
                                          ])

@@ -32,9 +32,16 @@ class ValueParseException(LineParseException):
     pass
 
 
-class VariableNotFound(KeyError):
+class VariableNotFoundException(KeyError):
     """
     Exception finding a replacement variable.
+    """
+    pass
+
+
+class VariableHiddenException(KeyError):
+    """
+    Exception caused by an iteration variable hiding a normal variable.
     """
     pass
 
@@ -52,6 +59,7 @@ class VariableManager(engine.BaseManager):
         """
         super().__init__(filepath)
         self._variables = None
+        self._loop_variables = []
 
     @staticmethod
     def _parse_line(line):
@@ -103,4 +111,23 @@ class VariableManager(engine.BaseManager):
         if key in self._variables:
             return self._variables[key]
         else:
-            raise VariableNotFound("The variable '{}' was not defined in the file '{}'".format(key, self._filepath))
+            raise VariableNotFoundException("The variable '{}' was not defined in the file '{}'".format(key, self._filepath))
+
+    def add_loop_variable(self, key, value):
+        """
+        Adds a looping variable to
+        :param key: String with the variable name.
+        :param value: String with the variable value
+        :raise VariableHiddenException if a variable with the same name already exists.
+        """
+        if key in self._variables:
+            raise VariableHiddenException("The variable '{0}:{1}' hides the existing '{0}':'{2}'".format(
+                key, value, self._variables[key]))
+        self._variables[key] = value
+
+    def delete_loop_variable(self, key):
+        """
+        Deletes the temporary looping variable.
+        :param key: String with the variable name.
+        """
+        self._variables.pop(key, None)

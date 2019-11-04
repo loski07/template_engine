@@ -120,7 +120,16 @@ class Parser:
         replacement_var = ""
         loop_contents = []
         loop_level = 0
-        for item in self._scanner.scan():
+        buffered_tokens = None
+        scanner_generator = self._scanner.scan()
+        while True:
+            if buffered_tokens:
+                item = buffered_tokens
+                buffered_tokens = None
+            else:
+                item = next(scanner_generator, None)
+                if not item:
+                    break
             if state == 0:
                 if item[0] in [LexTokens.EOL, LexTokens.BLANK, LexTokens.VERBATIM]:
                     verbatim_elem = VerbatimElement(item[1])
@@ -200,7 +209,7 @@ class Parser:
                 if item[0] == LexTokens.BLANK:
                     continue
                 if item[0] == LexTokens.END_EXPRESSION:
-                    state = 0
+                    state = 400
                     loop_level += 1
                     continue
                 else:
@@ -210,8 +219,14 @@ class Parser:
                 if item[0] == LexTokens.BLANK:
                     continue
                 if item[0] == LexTokens.END_EXPRESSION:
-                    state = 0
+                    state = 400
                     loop_level -= 1
                     if loop_level == 0:
                         yield loop_contents[loop_level]
                     continue
+
+            if state == 400:  # "{{ #loop varName iterator }} or {{ /loop }} found"
+                state = 0
+                if item[0] != LexTokens.EOL:
+                    buffered_tokens = item
+                continue
