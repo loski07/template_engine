@@ -94,6 +94,13 @@ class ParserTest(unittest.TestCase):
                             VerbatimElement("bye"), EolElement()]
         self._test_parse("parser_var.txt", expected_results)
 
+    def test_parse_simple_replacement_wrong(self):
+        """
+        Tests the parsing of a file with simple string replacement but wrong syntax.
+        """
+        with self.assertRaises(engine.syntactical_analysis.SyntaxException):
+            engine.syntactical_analysis.SyntaxException, self._test_parse("parser_var_wrong_extra.txt", [])
+
     def test_parse_loop(self):
         """
         Tests the parsing of a file with simple loops.
@@ -138,6 +145,33 @@ class ParserTest(unittest.TestCase):
                             ]
         self._test_parse("parser_loop_with_extra_var.txt", expected_results)
 
+    def test_parse_loop_wrong_init_token(self):
+        """
+        Tests the parsing of a file with a loop with a wrong init token syntax.
+        """
+        with self.assertRaises(engine.syntactical_analysis.SyntaxException):
+            self._test_parse("parser_loop_wrong_init_token.txt", [])
+
+    def test_parse_loop_wrong_end_token(self):
+        """
+        Tests the parsing of a file with a loop with a wrong end token syntax.
+        """
+        with self.assertRaises(engine.syntactical_analysis.SyntaxException):
+            self._test_parse("parser_loop_wrong_end_token.txt", [])
+
+    def test_parse_loop_wrong_less_params(self):
+        """
+        Tests the parsing of a file with a loop with a wrong syntax because it has less tokens in the loop.
+        """
+        with self.assertRaises(engine.syntactical_analysis.SyntaxException):
+            self._test_parse("parser_loop_wrong_less_params.txt", [])
+
+    def test_parse_loop_wrong_more_params(self):
+        """
+        Tests the parsing of a file with a loop with a wrong syntax because it has more tokens in the loop.
+        """
+        with self.assertRaises(engine.syntactical_analysis.SyntaxException):
+            self._test_parse("parser_loop_wrong_more_params.txt", [])
 
 if __name__ == '__main__':
     unittest.main()

@@ -1,0 +1,3 @@
+{{ #loop array1 item extra }}
+repeat {{ item }} again
+{{ /loop }}

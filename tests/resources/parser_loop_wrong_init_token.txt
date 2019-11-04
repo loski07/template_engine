@@ -1,0 +1,3 @@
+{{ #liip array1 item }}
+repeat {{ item }} again
+{{ /loop }}
