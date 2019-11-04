@@ -144,18 +144,26 @@ class ScannerTest(unittest.TestCase):
 
 
 class ParserTest(unittest.TestCase):
+    """
+    Unittests of the parser.
+    """
 
     def _test_parse(self, filename, expected_results):
+        """
+        Generic method that performs the test based on the init file and the expected results.
+        :param filename: String containing the name of the input file used for the test.
+        :param expected_results: List of engine.file_managers.ParserElements to check against.
+        """
         parser = engine.file_managers.Parser(engine.file_managers.Scanner(path_composer(filename)))
         file_analyzed = [construction for construction in parser.parse()]
 
-        for idx, val in enumerate(expected_results):
-            self.assertTrue(isinstance(type(val), type(file_analyzed[idx]) or
-                                       issubclass(type(val), type(file_analyzed[idx]))))
-            if type(val) == ReplacementElement.__class__:
-                self.assertEqual(val.variable_name, file_analyzed[idx].variable_name, "Different vars")
-            if type(val) == VerbatimElement.__class__:
-                self.assertEqual(val.value, file_analyzed[idx].value, "Different vars")
+        for idx, expected in enumerate(expected_results):
+            obtained = file_analyzed[idx]
+            self.assertTrue(isinstance(type(expected), type(obtained)) or issubclass(type(expected), type(obtained)))
+            if type(expected) == ReplacementElement.__class__:
+                self.assertEqual(expected.variable_name, obtained.variable_name, "Different vars")
+            if type(expected) in [VerbatimElement.__class__, BlankElement.__class__, EolElement.__class__]:
+                self.assertEqual(expected.value, obtained.value, "Different value")
 
     def test_parse_simple_replacement(self):
         expected_results = [VerbatimElement("hi"), BlankElement(), ReplacementElement("variable1"), EolElement(),
@@ -170,7 +178,7 @@ class ParserTest(unittest.TestCase):
                                          ]
                                         )
                             ]
-        self._test_parse("parse_loop.txt", expected_results)
+        self._test_parse("parser_loop.txt", expected_results)
 
     # def test_parse_file(self):
     #     parser = engine.file_managers.Parser(engine.file_managers.Scanner(path_composer("parser_loop.txt")))
