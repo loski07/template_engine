@@ -1,0 +1,6 @@
+{{ #loop array1 item }}
+repeat {{ item }} again {{var1}}
+{{#loop array2 item2}}
+crossing fingers {{item2}}
+{{/loop}}
+{{ /loop }}

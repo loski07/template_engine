@@ -148,6 +148,36 @@ class ParserTest(unittest.TestCase):
     Unittests of the parser.
     """
 
+    @staticmethod
+    def _replacements_equal(expected, obtained):
+        same_type = isinstance(type(expected), type(obtained)) or issubclass(type(expected), type(obtained))
+        same_value = expected.variable_name == obtained.variable_name
+        return same_type and same_value
+
+    @staticmethod
+    def _verbatim_equal(expected, obtained):
+        same_type = isinstance(type(expected), type(obtained)) or issubclass(type(expected), type(obtained))
+        same_value = expected.value == obtained.value
+        return same_type and same_value
+
+    @staticmethod
+    def _loop_equal(expected, obtained):
+        same_type = isinstance(type(expected), type(obtained)) or issubclass(type(expected), type(obtained))
+        same_value = expected.variable_name == obtained.variable_name
+        same_value =  same_value and expected.iterator_variable == obtained.iterator_variable
+        for idx, obtained_loop_item in enumerate(obtained.loop_elements):
+            expected_loop_item = expected.loop_elements[idx]
+            if type(obtained_loop_item) == ReplacementElement:
+                same_value = same_value and ParserTest._replacements_equal(
+                    expected_loop_item, obtained_loop_item)
+            elif type(obtained_loop_item) in [VerbatimElement, BlankElement, EolElement]:
+                same_value = same_value and ParserTest._verbatim_equal(expected_loop_item, obtained_loop_item)
+            else:
+                same_value = same_value and ParserTest._loop_equal(expected_loop_item, obtained_loop_item)
+            if not same_value:
+                return False
+        return same_type and same_value
+
     def _test_parse(self, filename, expected_results):
         """
         Generic method that performs the test based on the init file and the expected results.
@@ -159,11 +189,12 @@ class ParserTest(unittest.TestCase):
 
         for idx, expected in enumerate(expected_results):
             obtained = file_analyzed[idx]
-            self.assertTrue(isinstance(type(expected), type(obtained)) or issubclass(type(expected), type(obtained)))
-            if type(expected) == ReplacementElement.__class__:
-                self.assertEqual(expected.variable_name, obtained.variable_name, "Different vars")
-            if type(expected) in [VerbatimElement.__class__, BlankElement.__class__, EolElement.__class__]:
-                self.assertEqual(expected.value, obtained.value, "Different value")
+            if type(expected) == ReplacementElement:
+                self.assertTrue(ParserTest._replacements_equal(expected, obtained))
+            elif type(expected) in [VerbatimElement, BlankElement, EolElement]:
+                self.assertTrue(ParserTest._verbatim_equal(expected, obtained))
+            else:
+                self.assertTrue(ParserTest._loop_equal(expected, obtained))
 
     def test_parse_simple_replacement(self):
         expected_results = [VerbatimElement("hi"), BlankElement(), ReplacementElement("variable1"), EolElement(),
@@ -172,7 +203,7 @@ class ParserTest(unittest.TestCase):
 
     def test_parse_loop(self):
         expected_results = [LoopElement("array1", "item",
-                                        [VerbatimElement("repeat"), BlankElement(),
+                                        [EolElement(), VerbatimElement("repeat"), BlankElement(),
                                          ReplacementElement("item"), BlankElement(),
                                          VerbatimElement("again"), EolElement()
                                          ]
@@ -180,11 +211,30 @@ class ParserTest(unittest.TestCase):
                             ]
         self._test_parse("parser_loop.txt", expected_results)
 
-    # def test_parse_file(self):
-    #     parser = engine.file_managers.Parser(engine.file_managers.Scanner(path_composer("parser_loop.txt")))
-    #
-    #     for c in parser.parse():
-    #         print(c)
+    def test_parse_loop_with_extra_var(self):
+        expected_results = [LoopElement("array1", "item",
+                                        [EolElement(), VerbatimElement("repeat"), BlankElement(),
+                                         ReplacementElement("item"), BlankElement(),
+                                         VerbatimElement("again"), BlankElement(),
+                                         ReplacementElement("var1"), EolElement()
+                                         ]
+                                        )
+                            ]
+        self._test_parse("parser_loop_with_extra_var.txt", expected_results)
+
+    def test_parse_loop_with_extra_loop(self):
+        expected_results = [LoopElement("array1", "item",
+                                        [EolElement(), VerbatimElement("repeat"), BlankElement(),
+                                         ReplacementElement("item"), BlankElement(),
+                                         VerbatimElement("again"), BlankElement(),
+                                         ReplacementElement("var1"), EolElement(),
+                                         LoopElement("array2", "item2", [
+                                             EolElement(), VerbatimElement("crossing"), BlankElement(),
+                                             VerbatimElement("fingers"), BlankElement(),
+                                             ReplacementElement("item2"), EolElement()])
+                                         ])
+                            ]
+        self._test_parse("parser_loop_with_extra_var.txt", expected_results)
 
 
 if __name__ == '__main__':

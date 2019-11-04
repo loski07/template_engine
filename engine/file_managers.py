@@ -216,7 +216,7 @@ class BlankElement(VerbatimElement):
 class EolElement(VerbatimElement):
     def __init__(self):
         super().__init__(Constructions.VERBATIM)
-        self.value = "/n"
+        self.value = "\n"
 
 
 class ReplacementElement(ParserElement):
