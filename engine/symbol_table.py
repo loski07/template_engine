@@ -55,7 +55,7 @@ class VariableManager(engine.BaseManager):
         """
         Constructor that initializes the arguments of the object.
         :param filepath: String containing the path of the replacements file.
-        :raise IOError when there is no file with such path.
+        :raise: IOError when there is no file with such path.
         """
         super().__init__(filepath)
         self._variables = None
@@ -68,9 +68,9 @@ class VariableManager(engine.BaseManager):
         Further explanation of the regular expression in https://regex101.com/r/Grx1GN/2
         :param line: Input line to parse.
         :return: String with the name of the variable and a string or a list of strings with the replacement value.
-        :raise LineParseException if the line has syntax errors.
-        :raise TokenParseException if no token could be found in the line.
-        :raise ValueParseException if no value could be found in the line.
+        :raise: LineParseException if the line has syntax errors.
+        :raise: TokenParseException if no token could be found in the line.
+        :raise: ValueParseException if no value could be found in the line.
         """
         matching_regex = r' *"(?P<token>[a-zA-Z]\w*)" *: *(?P<value>(("[^"]*")|\["[^"]*"(( *, *"[^"]*")+)\])) *$'
         result = re.search(matching_regex, line)
@@ -103,22 +103,23 @@ class VariableManager(engine.BaseManager):
         Gets the replacement value for the requested variable.
         :param key: String containing the variable name.
         :return: String or List with the replacement value.
-        :raise FileParseException if the file has not yet been parsed.
-        :raise VariableNotFound if the variable was not in the file.
+        :raise: FileParseException if the file has not yet been parsed.
+        :raise: VariableNotFound if the variable was not in the file.
         """
         if not self._variables:
             raise FileParseException("The file {} has not been parsed yet".format(self._filepath))
         if key in self._variables:
             return self._variables[key]
         else:
-            raise VariableNotFoundException("The variable '{}' was not defined in the file '{}'".format(key, self._filepath))
+            raise VariableNotFoundException("The variable '{}' was not defined in the file '{}'".format(
+                key, self._filepath))
 
     def add_loop_variable(self, key, value):
         """
         Adds a looping variable to
         :param key: String with the variable name.
         :param value: String with the variable value
-        :raise VariableHiddenException if a variable with the same name already exists.
+        :raise: VariableHiddenException if a variable with the same name already exists.
         """
         if key in self._variables:
             raise VariableHiddenException("The variable '{0}:{1}' hides the existing '{0}':'{2}'".format(

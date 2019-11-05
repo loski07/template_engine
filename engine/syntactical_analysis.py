@@ -87,7 +87,7 @@ class LoopElement(ParserElement):
         Constructor that initializes the object arguments.
         :param variable_name: String with the name of the variable to replace.
         :param iterator_variable: String with the name of the variable used as iterator.
-        :param loop_elements: List of ParserElemets that would be repeated.
+        :param loop_elements: List of ParserElements that would be repeated.
         """
         super().__init__(SyntaxElement.LOOP)
         self.variable_name = variable_name

@@ -71,6 +71,10 @@ class VariableManagerTests(unittest.TestCase):
             pass
 
     def _test_parse_correct_file(self, filename):
+        """
+        Utility method to test the results of reading a correct var file.
+        :param filename: String with the name of the file to read.
+        """
         try:
             mgr = VariableManager(path_composer(filename))
             mgr.parse()
@@ -81,12 +85,21 @@ class VariableManagerTests(unittest.TestCase):
             self.fail(e)
 
     def test_parse_correct_file(self):
+        """
+        Tests a nice input file.
+        """
         self._test_parse_correct_file('correct_var_file.txt')
 
     def test_parse_correct_file_duplicates(self):
+        """
+        Tests a correct input file but with duplicated variables.
+        """
         self._test_parse_correct_file('correct_var_file_duplicates.txt')
 
     def test_parse_correct_file_scrambled(self):
+        """
+        Tests a correct input file with more spaces around.
+        """
         self._test_parse_correct_file('correct_var_file_scrambled.txt')
 
 

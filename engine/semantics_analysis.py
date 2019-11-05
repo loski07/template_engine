@@ -1,16 +1,29 @@
-#!/usr/bin/env python
-import os
-import logging
 from engine.syntactical_analysis import LoopElement, VerbatimElement, ReplacementElement
 
 
 class SemanticsAnalyzer:
+    """
+    Class that performs the translation of the template placeholders into their final result.
+    """
 
     def __init__(self, parser, variable_manager):
+        """
+        Constructor that initializes the object arguments.
+        :param parser: engine.syntactical_analysis.Parser object that provides the syntax elements.
+        :param variable_manager: engine.symbol_table.VariableManager that contains the replacement variables.
+        """
         self.parser = parser
         self.var_mgr = variable_manager
 
     def _translate(self, parser_element):
+        """
+        Translates the syntactical element received.
+        :param parser_element: engine.syntactical_analysis.ParserElement to translate.
+        :return: String with the translation.
+        :raise: FileParseException if the file has not yet been parsed.
+        :raise: VariableNotFound if the variable was not in the file.
+        :raise: VariableHiddenException if a variable with the same name already exists.
+        """
         if isinstance(parser_element, VerbatimElement) or issubclass(parser_element.__class__, VerbatimElement):
             yield parser_element.value
         if isinstance(parser_element, ReplacementElement) or issubclass(parser_element.__class__, ReplacementElement):
@@ -28,35 +41,13 @@ class SemanticsAnalyzer:
             yield "".join(translated_elements)
 
     def run(self):
-        buffer = ""
+        """
+        Performs the translation of the whole template returning the translated elements one by one.
+        :return: String containing the next translated element.
+        :raise: FileParseException if the file has not yet been parsed.
+        :raise: VariableNotFound if the variable was not in the file.
+        :raise: VariableHiddenException if a variable with the same name already exists.
+        """
         for item in self.parser.parse():
             for translation in self._translate(item):
                 yield translation
-
-
-class OutputFileManager:
-    """
-    Class that manages the output file.
-    """
-
-    def __init__(self, filepath):
-        """
-        Constructor that initializes the arguments of the object.
-        """
-        self.logger = logging.getLogger(self.__class__.__name__)
-        if os.path.isfile(filepath):
-            self.logger.warning("The file {} already exists. It will be truncated".format(filepath))
-        self.file = open(filepath, 'w')
-
-    def __del__(self):
-        """
-        Destructor tha closes the output file.
-        """
-        self.file.close()
-
-    def print(self, lines):
-        """
-        Prints the specified lines in the output file.
-        :param lines: List of strings with the lines to print.
-        """
-        self.file.writelines(lines)

@@ -3,7 +3,6 @@ import engine
 from engine import LexTokens
 
 
-
 class Scanner(engine.BaseManager):
     """
     Class that performs a lexical analysis of the template.
@@ -13,11 +12,15 @@ class Scanner(engine.BaseManager):
         """
         Constructor that initializes the arguments of the object.
         :param filepath: String containing the path of the template file.
-        :raise IOError when there is no file with such path.
+        :raise: IOError when there is no file with such path.
         """
         super().__init__(filepath)
 
     def scan(self):
+        """
+        Performs the lexical analysis of the template file returning the tokens one by one.
+        :return: Tuple (engine.LexTokens, String) containing the type of the token and its contents.
+        """
         with open(self._filepath, 'r') as template_file:
             for line in template_file:
                 # Remove the \n character at the end of the line
