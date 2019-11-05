@@ -1,6 +1,6 @@
 import re
 from abc import ABC
-from engine import LexTokens, SyntaxElement
+from utils import LexTokens, SyntaxElement
 
 
 class SyntaxException(Exception):

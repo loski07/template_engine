@@ -1,7 +1,7 @@
-from engine.syntactical_analysis import LoopElement, VerbatimElement, ReplacementElement
+from syntactical_analysis import LoopElement, VerbatimElement, ReplacementElement
 
 
-class SemanticsAnalyzer:
+class SemanticAnalyzer:
     """
     Class that performs the translation of the template placeholders into their final result.
     """

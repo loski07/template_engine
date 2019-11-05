@@ -1,6 +1,6 @@
 import unittest
 from engine.symbol_table import VariableManager, FileParseException, LineParseException
-from tests.engineTests import path_composer
+from lexical_analisys_tests import path_composer
 
 
 class VariableManagerTests(unittest.TestCase):

@@ -1,7 +1,7 @@
 import ast
 import re
 
-import engine
+import utils
 
 
 class FileParseException(Exception):
@@ -46,7 +46,7 @@ class VariableHiddenException(KeyError):
     pass
 
 
-class VariableManager(engine.BaseManager):
+class VariableManager(utils.BaseManager):
     """
     Class that manages the replacement variables of the template engine.
     """

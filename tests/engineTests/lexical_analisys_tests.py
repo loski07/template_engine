@@ -1,8 +1,17 @@
+import os
 import unittest
 
 import engine.lexical_analysis
-from engine import LexTokens
-from tests.engineTests import path_composer
+from utils import LexTokens
+
+
+def path_composer(filename):
+    """
+    Utility function that composes the path of a file in the test resources folder of the project.
+    :param filename: String with the name of the file.
+    :return: Full path to the file.
+    """
+    return os.path.join(os.path.dirname(os.path.dirname(os.path.realpath(__file__))), 'resources', filename)
 
 
 class ScannerTest(unittest.TestCase):

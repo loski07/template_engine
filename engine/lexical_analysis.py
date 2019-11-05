@@ -1,9 +1,9 @@
 import re
-import engine
-from engine import LexTokens
+
+from utils import LexTokens, BaseManager
 
 
-class Scanner(engine.BaseManager):
+class Scanner(BaseManager):
     """
     Class that performs a lexical analysis of the template.
     """

@@ -1,22 +1,10 @@
-import os
 import unittest
 
-import engine
-import engine.lexical_analysis
-import engine.lexical_analysis
-import engine.semantics_analysis
-import engine.symbol_table
-import engine.syntactical_analysis
-import engine.syntactical_analysis
-
-
-def path_composer(filename):
-    """
-    Utility function that composes the path of a file in the test resources folder of the project.
-    :param filename: String with the name of the file.
-    :return: Full path to the file.
-    """
-    return os.path.join(os.path.dirname(os.path.dirname(os.path.realpath(__file__))), 'resources', filename)
+import lexical_analysis
+import semantic_analysis
+import symbol_table
+import syntactical_analysis
+from lexical_analisys_tests import path_composer
 
 
 expected = """some random text
@@ -35,7 +23,7 @@ is that okay?
 """
 
 
-class SemanticsAnalyzerTest(unittest.TestCase):
+class SemanticAnalyzerTest(unittest.TestCase):
     """
     Unittest of the Semantics analyzer.
     """
@@ -47,11 +35,11 @@ class SemanticsAnalyzerTest(unittest.TestCase):
         :param variable_file_name: String containing the name of the input file with the variables for the test.
         :param expected_string: String with the text to check against.
         """
-        scanner = engine.lexical_analysis.Scanner(path_composer(template_file_name))
-        parser = engine.syntactical_analysis.Parser(scanner)
-        var_mgr = engine.symbol_table.VariableManager(path_composer(variable_file_name))
+        scanner = lexical_analysis.Scanner(path_composer(template_file_name))
+        parser = syntactical_analysis.Parser(scanner)
+        var_mgr = symbol_table.VariableManager(path_composer(variable_file_name))
         var_mgr.parse()
-        translator = engine.semantics_analysis.SemanticsAnalyzer(parser, var_mgr)
+        translator = semantic_analysis.SemanticAnalyzer(parser, var_mgr)
 
         document = ""
         for chunk in translator.run():
